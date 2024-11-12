@@ -24,7 +24,7 @@ jobs:
       - name: Build the Svelte app
         run: npm run build
         env:
-          VITE_BASE_URL: "/color-outfit-app/"
+          VITE_BASE_URL: "/color-outfit-app"
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Deploy to GitHub Pages
