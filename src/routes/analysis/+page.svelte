@@ -25,35 +25,58 @@
         if (response.ok) {
           analysisData = await response.json();
         } else {
-            //   console.error('Failed to fetch analysis'); //TODO
-            // await new Promise(resolve => setTimeout(resolve, 3000));
-            analysisData = { /** Temporary response */
-                "skinTone": "#dabea0",
-                "season": "Autumn with warm undertones",
-                "undertone": "Warm",
-                "recommendedColors": {
-                    "neutrals": ["#f5f5dc", "#8b7765", "#d2b48c"],
-                    "accents": ["#c85a17", "#6b8e23", "#9b111e"]
-                },
-                "outfits": {
-                    "Client meetings": [
-                        "Light taupe blazer over a warm-toned, olive green blouse with tailored beige trousers, accessorized with a silver watch.",
-                        "Rust-colored dress shirt with charcoal trousers, accessorized with classic leather shoes and a structured tote bag."
-                    ],
-                    "Office work": [
-                        "Classic brown chinos paired with a cream button-up, complemented by a soft olive cardigan.",
-                        "Beige trousers and an ivory top, layered with a tan belt and loafers for a polished look."
-                    ],
-                    "Casual outings": [
-                        "Olive green t-shirt with light wash jeans, paired with casual sneakers and a light tan crossbody bag.",
-                        "Rust-colored henley top with khaki shorts, accessorized with a gold-toned bracelet and leather sandals."
-                    ],
-                    "Weekend casual": [
-                        "Soft cream tank top with denim shorts and an olive green overshirt, with comfortable slip-on sandals.",
-                        "Casual taupe dress with a wide-brim hat, paired with tan sandals for a relaxed weekend look."
-                    ]
-                }
-            }
+          console.error('Failed to fetch analysis');
+          // await new Promise(resolve => setTimeout(resolve, 3000));
+
+          const allOutfits: Record<string, string[]> = {
+              "Client meetings": [
+                  "Light olive chinos paired with a white button-down shirt and a camel blazer; accessorize with brown leather shoes and a matching belt.",
+                  "A tailored navy suit with a cream-colored shirt; accessorize with a gold watch and dark brown oxford shoes."
+              ],
+              "Date nights": [
+                  "Dark wash jeans, a rust-colored polo, and a beige bomber jacket; pair with loafers.",
+                  "A fitted olive green shirt, tailored black trousers, and leather Chelsea boots."
+              ],
+              "Office work": [
+                  "Khaki trousers with a light blue dress shirt and a charcoal blazer; complement with black oxford shoes.",
+                  "A dark olive dress shirt tucked into grey slacks, with brown monk strap shoes."
+              ],
+              "Casual outings": [
+                  "Beige shorts with a sage green linen shirt; pair with white sneakers.",
+                  "A mustard crew-neck T-shirt with dark denim jeans and brown leather loafers."
+              ],
+              "Weekend casual": [
+                  "A rust-colored T-shirt, light olive joggers, and white slip-on sneakers.",
+                  "A cream linen short-sleeve shirt, khaki shorts, and brown sandals."
+              ],
+              "Formal events": [
+                  "A deep olive tuxedo with a cream pocket square and brown leather loafers.",
+                  "A black three-piece suit with a gold tie and cufflinks, paired with black oxford shoes."
+              ],
+              "Athletic/Sports": [
+                  "A mustard athletic shirt with black shorts and white running shoes.",
+                  "An olive green tank top, grey sweatpants, and black training shoes."
+              ]
+          };
+
+          const filteredOutfits = userData?.commonOccasions.reduce((acc, occasion) => {
+              if (allOutfits[occasion]) {
+                  acc[occasion] = allOutfits[occasion];
+              }
+              return acc;
+          }, {} as Record<string, string[]>) || {};
+
+          // Temporary response
+          analysisData = {
+              "skinTone": color,
+              "season": "Autumn with warm undertones",
+              "undertone": "Warm",
+              "recommendedColors": {
+                  "neutrals": ["#f5f5dc", "#8b7765", "#d2b48c"],
+                  "accents": ["#c85a17", "#6b8e23", "#9b111e"]
+              },
+              "outfits": filteredOutfits
+          };
         }
       } catch (error) {
         console.error('Error fetching color analysis:', error);
