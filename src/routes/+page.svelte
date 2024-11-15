@@ -4,6 +4,16 @@
   }
 </script>
 
+<div class="landing-container">
+  <h1 class="landing-title">TintTone</h1>
+  <p class="landing-description">
+    Your personal color and outfit recommendation tool. Upload a selfie, explore colors, and get personalized outfit suggestions.
+  </p>
+  <button class="start-button" on:click={navigateToColorPicker}>
+    Start
+  </button>
+</div>
+
 <style>
   .landing-container {
     display: flex;
@@ -22,7 +32,6 @@
     color: #333;
     margin-bottom: 1.5rem;
     font-weight: bold;
-    text-transform: uppercase;
   }
 
   .landing-description {
@@ -54,13 +63,3 @@
     transform: translateY(0);
   }
 </style>
-
-<div class="landing-container">
-  <h1 class="landing-title">Welcome to TintTone!</h1>
-  <p class="landing-description">
-    Your personal color and outfit recommendation tool. Upload a selfie, explore colors, and get personalized outfit suggestions.
-  </p>
-  <button class="start-button" on:click={navigateToColorPicker}>
-    Start
-  </button>
-</div>
