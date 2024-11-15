@@ -8,7 +8,11 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		adapter: adapter(),
+		adapter: adapter({
+			pages: 'build',
+      		assets: 'build',
+			fallback: null
+		}),
 		paths: {
 		  base: process.env.NODE_ENV === "production" ? "/color-outfit-app" : "",
 		}
