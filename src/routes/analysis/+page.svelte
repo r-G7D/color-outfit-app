@@ -56,15 +56,34 @@
               "Athletic/Sports": [
                   "A mustard athletic shirt with black shorts and white running shoes.",
                   "An olive green tank top, grey sweatpants, and black training shoes."
-              ]
+              ],
+              "Casual": [
+                  "Beige chinos paired with a light olive green shirt. Accessorize with leather sandals or casual loafers in warm brown tones.",
+                  "Classic blue jeans with an earth-tone t-shirt, like terracotta or muted rust, and add a brown leather belt for a warm, grounded look."
+              ],
+              "Professional": [
+                  "A tailored light brown or camel suit paired with a cream shirt for a polished yet warm look. Finish with dark brown leather shoes and a matching belt.",
+                  "For a smart-casual office setting, try a soft beige or taupe shirt under a navy blazer with light khaki pants, adding warm-toned accessories like a brown leather watch strap."
+              ],
+              "Evening": [
+                  "A deep olive green button-down shirt paired with dark charcoal or brown slacks and tan leather shoes for a sophisticated yet season-appropriate ensemble.",
+                  "Classic black trousers with a muted burnt orange shirt and brown leather accessories, adding a subtle but warm pop of color for evening events."
+              ]     
           };
 
-          const filteredOutfits = userData?.commonOccasions.reduce((acc, occasion) => {
+          // Fallback occasions
+          const defaultOccasions = ["Casual", "Professional", "Evening"];
+
+          // Use userData.commonOccasions or fall back to default
+          const occasionsToUse = userData?.commonOccasions?.length ? userData.commonOccasions : defaultOccasions;
+
+          // Dynamically filter outfits based on the selected occasions
+          const filteredOutfits = occasionsToUse.reduce((acc: Record<string, string[]>, occasion: string) => {
               if (allOutfits[occasion]) {
                   acc[occasion] = allOutfits[occasion];
               }
               return acc;
-          }, {} as Record<string, string[]>) || {};
+          }, {});
 
           // Temporary response
           analysisData = {
@@ -88,183 +107,376 @@
   
   <div class="analysis-container">
     {#if isLoading}
-        <div class="loading-text">
-            <div class="spinner"></div>
-            <p>Loading your personalized color and outfit analysis...</p>
-        </div>
+      <div class="loading-container">
+        <div class="spinner"></div>
+        <p class="loading-text">Loading your personalized color and outfit analysis...</p>
+      </div>
     {:else if analysisData}
-        <div class="analysis-card">
-            <h2 class="text-2xl font-bold mb-4">Color Analysis Results</h2>
+      <div class="content-wrapper">
+        <h2 class="title">Color Analysis Results</h2>
         
-            <!-- Display the primary color -->
-            <div class="color-display">
-                <p class="label">Skin Tone:</p>
-                <div class="color-swatch" style="background-color: {analysisData.skinTone};"></div>
-                <p>{analysisData.skinTone}</p>
+        <!-- Primary Analysis Section -->
+        <div class="primary-analysis">
+          <div class="analysis-box">
+            <div class="skin-tone-display">
+              <h3 class="box-title">Your Skin Tone</h3>
+              <div class="color-display">
+                <div 
+                  class="large-swatch" 
+                  style="background-color: {analysisData.skinTone};"
+                ></div>
+                <p class="color-code">{analysisData.skinTone}</p>
+              </div>
             </div>
-        
-            <!-- Season and Undertone -->
-            <div class="section">
-                <p class="label">Season:</p>
-                <p>{analysisData.season}</p>
+          </div>
+  
+          <div class="analysis-box">
+            <h3 class="box-title">Your Color Profile</h3>
+            <div class="profile-info">
+              <div class="info-item">
+                <span class="label">Season</span>
+                <span class="value">{analysisData.season}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Undertone</span>
+                <span class="value">{analysisData.undertone}</span>
+              </div>
             </div>
-            <div class="section">
-                <p class="label">Undertone:</p>
-                <p>{analysisData.undertone}</p>
-            </div>
-        
-            <!-- Recommended Colors -->
-            <div class="section">
-                <h3 class="subheader">Recommended Colors</h3>
-                <div class="color-group">
-                <p class="label">Neutrals:</p>
-                <div class="color-list">
-                    {#each analysisData.recommendedColors.neutrals as color}
-                    <div class="color-swatch" style="background-color: {color};"></div>
-                    {/each}
-                </div>
-                </div>
-                <div class="color-group">
-                <p class="label">Accents:</p>
-                <div class="color-list">
-                    {#each analysisData.recommendedColors.accents as color}
-                    <div class="color-swatch" style="background-color: {color};"></div>
-                    {/each}
-                </div>
-                </div>
-            </div>
-    
-        <!-- Outfit Recommendations -->
-            <div class="section">
-                <h3 class="subheader">Outfit Recommendations</h3>
-                {#each Object.entries(analysisData.outfits) as [occasion, outfits]}
-                    <div class="occasion-container">
-                        <p class="occasion-title"><strong>{occasion.charAt(0).toUpperCase() + occasion.slice(1)}:</strong></p>
-                        <ul class="outfit-list">
-                            {#each outfits as outfit}
-                                <li>{outfit}</li>
-                            {/each}
-                        </ul>
-                    </div>
-                {/each}
-            </div>
+          </div>
         </div>
+  
+        <!-- Color Recommendations Section -->
+        <div class="recommendations-section">
+          <h3 class="section-title">Your Color Palette</h3>
+          
+          <div class="color-recommendations">
+            <div class="palette-group">
+              <h4 class="palette-title">Neutrals</h4>
+              <div class="color-swatches">
+                {#each analysisData.recommendedColors.neutrals as color}
+                  <div class="color-item">
+                    <div 
+                      class="swatch" 
+                      style="background-color: {color};"
+                    ></div>
+                    <span class="color-name">{color}</span>
+                  </div>
+                {/each}
+              </div>
+            </div>
+  
+            <div class="palette-group">
+              <h4 class="palette-title">Accent Colors</h4>
+              <div class="color-swatches">
+                {#each analysisData.recommendedColors.accents as color}
+                  <div class="color-item">
+                    <div 
+                      class="swatch" 
+                      style="background-color: {color};"
+                    ></div>
+                    <span class="color-name">{color}</span>
+                  </div>
+                {/each}
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Outfit Recommendations Section -->
+        <div class="recommendations-section">
+          <h3 class="section-title">Outfit Recommendations</h3>
+          <div class="outfits-grid">
+            {#each Object.entries(analysisData.outfits) as [occasion, outfits]}
+              <div class="outfit-card">
+                <h4 class="occasion-title">
+                  {occasion.charAt(0).toUpperCase() + occasion.slice(1)}
+                </h4>
+                <ul class="outfit-list">
+                  {#each outfits as outfit}
+                    <li class="outfit-item">{outfit}</li>
+                  {/each}
+                </ul>
+              </div>
+            {/each}
+          </div>
+        </div>
+      </div>
     {:else}
-        <div class="error-text">
+      <div class="error-container">
+        <div class="error-message">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12" y2="16"/>
+          </svg>
           <p>Failed to retrieve analysis. Please try again.</p>
         </div>
+      </div>
     {/if}
   </div>
   
   <style>
+    :global(body) {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #9ec0ff 0%, rgba(158, 192, 255, 0.2) 100%);
+      font-family: Poppins, Arial, sans-serif;
+    }
+
     .analysis-container {
       display: flex;
       justify-content: center;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-    }
-  
-    .analysis-card {
-      max-width: 600px;
-      width: 100%;
-      background-color: white;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    }
-  
-    .color-display {
-      display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
+      min-height: 100vh;
+      padding: 2rem;
     }
   
-    .color-swatch {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      border: 1px solid #ddd;
+    .content-wrapper {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 2rem;
+      box-shadow: 
+        0 8px 32px rgba(31, 38, 135, 0.15),
+        0 4px 8px rgba(0, 0, 0, 0.1);
     }
   
-    .section {
-      margin-bottom: 20px;
+    .title {
+      font-size: 2.5rem;
+      color: #1a365d;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 2.5rem;
+      letter-spacing: -0.5px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  
+    .primary-analysis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+  
+    .analysis-box {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+  
+    .box-title {
+      font-size: 1.25rem;
+      color: #1a365d;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+  
+    .skin-tone-display {
+      text-align: center;
+    }
+  
+    .large-swatch {
+      width: 100px;
+      height: 100px;
+      border-radius: 1rem;
+      margin: 0 auto 1rem;
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  
+    .color-code {
+      font-size: 1.1rem;
+      color: #2d4a77;
+      font-weight: 500;
+    }
+  
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+  
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 0.75rem;
     }
   
     .label {
-      font-weight: bold;
-      margin-bottom: 4px;
+      color: #2d4a77;
+      font-weight: 500;
     }
   
-    .subheader {
-      font-size: 1.25em;
-      font-weight: bold;
-      margin-bottom: 10px;
+    .value {
+      color: #1a365d;
+      font-weight: 600;
     }
   
-    .color-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
+    .recommendations-section {
+      margin-top: 3rem;
     }
   
-    .color-list {
-      display: flex;
-      gap: 8px;
+    .section-title {
+      font-size: 1.8rem;
+      color: #1a365d;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid rgba(74, 144, 226, 0.3);
     }
   
-    p {
-      margin: 4px 0;
+    .color-recommendations {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
     }
-    
-    .loading-text,
-    .error-text {
-    font-size: 1.25rem;
-    text-align: center;
-    margin-top: 2rem;
-    padding: 1.5rem;
-    color: #0070f3;
-    background-color: #ededed; 
-    border-radius: 0.5rem;
+  
+    .palette-group {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 1rem;
+      padding: 1.5rem;
     }
-
-    @keyframes spin {
-    0% {
-        transform: rotate(0deg);
+  
+    .palette-title {
+      font-size: 1.2rem;
+      color: #1a365d;
+      margin-bottom: 1rem;
+      text-align: center;
     }
-    100% {
-        transform: rotate(360deg);
+  
+    .color-swatches {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 1rem;
     }
+  
+    .color-item {
+      text-align: center;
+    }
+  
+    .swatch {
+      width: 50px;
+      height: 50px;
+      border-radius: 0.5rem;
+      margin: 0 auto 0.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+  
+    .color-name {
+      font-size: 0.8rem;
+      color: #2d4a77;
+    }
+  
+    .outfits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+  
+    .outfit-card {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 1rem;
+      padding: 1.5rem;
+    }
+  
+    .occasion-title {
+      font-size: 1.2rem;
+      color: #1a365d;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+  
+    .outfit-list {
+      list-style: none;
+      padding: 0;
+    }
+  
+    .outfit-item {
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      color: #2d4a77;
+    }
+  
+    .loading-container {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 1rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .spinner {
-    margin: 1.5rem auto;
-    border: 4px solid #e5e7eb; 
-    border-top: 4px solid #0070f3; 
-    border-radius: 50%;
-    width: 3rem;
-    height: 3rem;
-    animation: spin 1s linear infinite;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid #4a90e2;
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 1rem;
+      animation: spin 1s linear infinite;
     }
 
-    .occasion-container {
-        margin: 0;
-        padding: 0;
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
-    .occasion-title {
-        margin-bottom: 0;
-        font-weight: bold;
+    .loading-text {
+      color: #1a365d;
+      font-size: 1.2rem;
     }
-
-    .outfit-list {
-        margin-top: 0;
-        padding-left: 1.2rem; 
+  
+    .error-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 60vh;
     }
-
-    .outfit-list li {
-        margin: 0;
+  
+    .error-message {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: rgba(255, 74, 74, 0.1);
+      border-radius: 1rem;
+      color: #e53e3e;
+    }
+  
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  
+    @media (max-width: 768px) {
+      .content-wrapper {
+        padding: 1.5rem;
+      }
+  
+      .title {
+        font-size: 2rem;
+      }
+  
+      .color-swatches {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      }
+  
+      .large-swatch {
+        width: 80px;
+        height: 80px;
+      }
     }
   </style>
-  
